@@ -1,0 +1,116 @@
+<html class="gr__s3_amazonaws_com"><head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <style>
+        html, text {
+            background-color: #354551;
+            color: white;
+            font-family: 'Oxygen', sans-serif;
+            fill: white;
+        }
+        body {
+            background-color: #354551;
+            color: white;
+            font-family: 'Oxygen', sans-serif;
+            font-size: 16px;
+        }
+        td {
+            padding: 5px;
+        }
+        .percentLabel{
+            margin-left: 3px;
+        }
+    </style>
+    </head>
+    <body data-gr-c-s-loaded="true">
+    <br>
+    <table>
+    <tbody><tr>
+        <th></th>
+        <th class=""></th>
+    </tr>
+    <tr>
+        <td>
+        Baseline conversion rate:
+        </td>
+        <td>
+        <input value="3" step="1" min="0" max="100" id="conversion" onchange="update()" type="number"><span class="percentLabel">%</span>
+        </td>
+    </tr>
+    <tr><td>
+        Statistical significance:
+        </td>
+        <td>
+        <input id="significance80" name="significance" value="0.85" checked="checked" type="radio">
+        <label for="significance80">85%</label>
+    
+        <input id="significance90" name="significance" value="0.9" type="radio">
+        <label for="significance90">90%</label>
+    
+        <input id="significance95" name="significance" value="0.95" type="radio">
+        <label for="significance95">95%</label>
+        </td>
+    </tr>
+    <tr><td>
+        Minimum detectable effect:
+        </td>
+        <td>
+        <input value="20" step="1" min="0" max="100" id="minimum_effect" onchange="update()" type="number"><span class="percentLabel">%</span>
+        </td>
+    </tr>
+    <tr>
+        <td>Sample size: </td>
+        <td><span id="numSamples">12000</span></td>
+    </tr>
+    </tbody></table>
+    <br>
+    <script src="jquery-3.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    
+    <script>
+    
+    
+    function getSampleSize(minimum_detectable, significance, conversion_rate) {
+        let zscore = 1.96
+        if(significance == 0.85) {
+            zscore = 1.44
+        }
+        else if(significance == 0.9){
+            zscore = 1.64
+        }
+    
+        let factor = 2*(1.28+zscore)**2
+    
+        let numerator = Math.sqrt(conversion_rate * (1 - conversion_rate));
+        let denominator = Math.abs(conversion_rate * minimum_detectable);
+        let min_sample_size = factor * Math.pow(numerator/denominator, 2);
+    
+        return parseFloat(min_sample_size.toPrecision(2));
+    
+    }
+    
+    function update() {
+        var minimum_detectable = parseFloat($("#minimum_effect").val())/100
+        var significance = parseFloat($('input[name=significance]:checked').val())
+        var conversion_rate = parseFloat($("#conversion").val())/100
+        num_samples = getSampleSize(minimum_detectable, significance, conversion_rate)
+        $("#numSamples").html(num_samples)
+    }
+    
+    function setup() {
+        $("input[type=radio][name=significance]").change(function(){
+            update()
+        })
+        $("input").on("keyup", function(){
+            update()
+        })
+        $("input").on("click", function(){
+            update()
+        })
+    }
+    
+    $(document).on("ready", setup())
+    
+    </script>
+    
+    
+    </body></html>
+    
