@@ -1,4 +1,5 @@
 # Comprehensive Dog Breed Analysis for FetchMaker
+# This script performs statistical analysis on dog breed data to identify significant differences in rescue rates, weights, and color associations.
 
 import numpy as np
 import pandas as pd
@@ -21,6 +22,9 @@ class FetchMakerAnalyzer:
         try:
             self.dogs = pd.read_csv(data_path)
             print("Data successfully loaded.")
+        except pd.errors.EmptyDataError:
+            print("Error: The file is empty.")
+            self.dogs = None
         except FileNotFoundError:
             print(f"Error: File {data_path} not found.")
             self.dogs = None
